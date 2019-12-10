@@ -16,6 +16,7 @@ RestApiClient::RestApiClient(QObject *parent):
                 this, &RestApiClient::reply_finished);
 
     QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+    config.setProtocol(QSsl::TlsV1_2);
     m_request_main_frame.setSslConfiguration(config);
 
     QUrl m_main_frame_qurl;
@@ -34,6 +35,7 @@ RestApiClient::RestApiClient(QObject *parent):
     m_sql_frame_qurl.setPath("/dbapi/v3/sql_jobs");
 
     m_request_sql_frame.setUrl(m_sql_frame_qurl);
+    m_request_sql_frame.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     m_request_sql_frame.setSslConfiguration(config);
 
 
@@ -61,12 +63,12 @@ void RestApiClient::send_main_frame()
 
 void RestApiClient::send_sql_frame()
 {
-    QString json = QString("[{ "
+    QString json = QString("{ "
                            "\"commands\":\"SELECT * FROM TEST;\", "
-                           "\"limit\":\"1000\", "
+                           "\"limit\":1000, "
                            "\"separator\":\";\", "
                            "\"stop_on_error\":\"yes\" "
-                           "}]"
+                           "}"
                            );
     m_reply_sql_frame = m_manager->post(m_request_sql_frame, json.toUtf8());
     m_reply_sql_frame = m_manager->post(m_request_sql_frame, json.toUtf8());
