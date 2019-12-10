@@ -17,7 +17,6 @@ RestApiClient::RestApiClient(QObject *parent):
 
     QSslConfiguration config = QSslConfiguration::defaultConfiguration();
     config.setProtocol(QSsl::TlsV1_2);
-    m_request_main_frame.setSslConfiguration(config);
 
     QUrl m_main_frame_qurl;
     m_main_frame_qurl.setScheme("https");
@@ -27,6 +26,7 @@ RestApiClient::RestApiClient(QObject *parent):
 
     m_request_main_frame.setUrl(m_main_frame_qurl);
     m_request_main_frame.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    m_request_main_frame.setSslConfiguration(config);
 
     QUrl m_sql_frame_qurl;
     m_sql_frame_qurl.setScheme("https");
@@ -38,6 +38,13 @@ RestApiClient::RestApiClient(QObject *parent):
     m_request_sql_frame.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     m_request_sql_frame.setSslConfiguration(config);
 
+    m_result_frame_qurl.setScheme("https");
+    m_result_frame_qurl.setHost("dashdb-txn-sbox-yp-lon02-02.services.eu-gb.bluemix.net");
+    m_result_frame_qurl.setPort(8443);
+
+
+    m_request_result_frame.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    m_request_result_frame.setSslConfiguration(config);
 
     send_main_frame();
 }
@@ -71,7 +78,6 @@ void RestApiClient::send_sql_frame()
                            "}"
                            );
     m_reply_sql_frame = m_manager->post(m_request_sql_frame, json.toUtf8());
-    m_reply_sql_frame = m_manager->post(m_request_sql_frame, json.toUtf8());
 
     qCDebug (restapi) << "ramka główna: " << json.toUtf8();
 
@@ -80,6 +86,18 @@ void RestApiClient::send_sql_frame()
     connect(m_reply_sql_frame, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
             this, &RestApiClient::slot_error);
     connect(m_reply_sql_frame, &QNetworkReply::sslErrors,
+            this, &RestApiClient::slot_ssl_errors);
+}
+
+void RestApiClient::send_result_frame()
+{
+    m_reply_result_frame = m_manager->get(m_request_result_frame);
+
+    connect(m_reply_result_frame, &QNetworkReply::finished, this, &RestApiClient::ready_read_result_frame);
+    connect(m_reply_result_frame, &QNetworkReply::finished, m_reply_result_frame, &QNetworkReply::deleteLater);
+    connect(m_reply_result_frame, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+            this, &RestApiClient::slot_error);
+    connect(m_reply_result_frame, &QNetworkReply::sslErrors,
             this, &RestApiClient::slot_ssl_errors);
 }
 
@@ -101,7 +119,7 @@ void RestApiClient::ready_read_main_frame()
         QString headerData = "Bearer " + data;
         qDebug() << headerData;
         m_request_sql_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
-        qDebug() << "sdsdsd";
+        m_request_result_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
         qDebug() << m_request_sql_frame.rawHeader("Authorization");
         send_sql_frame();
         return;
@@ -122,10 +140,37 @@ void RestApiClient::ready_read_sql_frame()
     if(m_reply_sql_frame->error() == QNetworkReply::NoError){
         qCDebug(restapi) << "sql response:";
         qCDebug(restapi) << reply_array;
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+        QString job_id = jsonResponse.object()["id"].toString();
+        QString job_endpoint = "/dbapi/v3/sql_jobs/" + job_id;
+        qDebug() << job_id;
+        qDebug() << job_endpoint;
+        m_result_frame_qurl.setPath(job_endpoint);
+        m_request_result_frame.setUrl(m_result_frame_qurl);
+        send_result_frame();
         return;
     }
 
-    qCDebug(restapi) << "Błąd pobierania danych main_frame:" << m_reply_sql_frame->errorString() << m_reply_sql_frame->error();
+    qCDebug(restapi) << "Błąd pobierania danych sql_frame:" << m_reply_sql_frame->errorString() << m_reply_sql_frame->error();
+}
+
+void RestApiClient::ready_read_result_frame()
+{
+    if(m_reply_result_frame->error()== QNetworkReply::OperationCanceledError){
+        return;
+    }
+
+    QByteArray reply_array = m_reply_result_frame->readAll();
+    qDebug() << m_reply_result_frame->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+
+    if(m_reply_result_frame->error() == QNetworkReply::NoError){
+        qCDebug(restapi) << "sql result response:";
+        qCDebug(restapi) << reply_array;
+        return;
+    }
+
+    qCDebug(restapi) << "Błąd pobierania danych sql_result_frame:" << m_reply_result_frame->errorString() << m_reply_result_frame->error();
+
 }
 
 void RestApiClient::slot_ssl_errors(const QList<QSslError> &errors)
