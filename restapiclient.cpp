@@ -57,7 +57,7 @@ void RestApiClient::send_authorization_frame()
                            "}"
                            );
     auto reply = m_manager->post(m_request_main_frame, json.toUtf8());
-    reply->setProperty("request_type", RequestHello);
+    reply->setProperty("request_type", CustomTypes::RequestHello);
 
     qCDebug(restapi) << "Ramka authorization: " << json.toUtf8();
 
@@ -68,7 +68,7 @@ void RestApiClient::send_authorization_frame()
             this, &RestApiClient::slot_ssl_errors);
 }
 
-void RestApiClient::send_sql_frame(QString query, RequestType request_type)
+void RestApiClient::send_sql_frame(QString query, CustomTypes::RequestType request_type)
 {
     QString json = QString(query);
     auto reply = m_manager->post(m_request_sql_frame, json.toUtf8());
@@ -90,7 +90,7 @@ void RestApiClient::send_result_frame(QString job_id)
     m_result_frame_qurl.setPath(job_endpoint);
     m_request_result_frame.setUrl(m_result_frame_qurl);
     auto reply = m_manager->get(m_request_result_frame);
-    reply->setProperty("request_type", RequestResponse);
+    reply->setProperty("request_type", CustomTypes::RequestResponse);
     reply->setProperty("job_id", job_id);
 
     connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
@@ -115,8 +115,8 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
     QByteArray reply_array = reply->readAll();
     qCDebug(restapi) << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     if(reply->error() == QNetworkReply::NoError){
-        switch (reply->property("request_type").value<RequestType>()){
-        case RequestHello:
+        switch (reply->property("request_type").value<CustomTypes::RequestType>()){
+        case CustomTypes::RequestHello:
         {
             qCDebug(restapi) << "Odpowiedź ramki autoryzacyjnej:";
             qCDebug(restapi) << reply_array;
@@ -129,46 +129,30 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
             m_request_result_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
             return;
         }
-        case RequestResponse:
+        case CustomTypes::RequestResponse:
         {
             QString job_id = reply->property("job_id").toString();
-            RequestType request_type = m_result_map.take(job_id);
-            switch (request_type) {
-            case RequestTest:
-            {
-                qCDebug(restapi) << "test result response:";
-                qCDebug(restapi) << reply_array;
-                break;
-            }
-            case RequestCategory:
-            {
-                qCDebug(restapi) << "category result response:";
-                qCDebug(restapi) << reply_array;
-                break;
-            }
-            default:
-                qCDebug(restapi) << "nieznane zapytanie sql";
-                break;
-            }
-            return;
+            CustomTypes::RequestType request_type = m_result_map.take(job_id);
+            emit reply_received(request_type, reply_array);
+            break;
         }
-        case RequestTest:
+        case CustomTypes::RequestTest:
         {
             qCDebug(restapi) << "RequestTest response:";
             qCDebug(restapi) << reply_array;
             QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
             QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<RequestType>());
+            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
             send_result_frame(job_id);
             return;
         }
-        case RequestCategory:
+        case CustomTypes::RequestCategory:
         {
             qCDebug(restapi) << "RequestCategory response:";
             qCDebug(restapi) << reply_array;
             QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
             QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<RequestType>());
+            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
             send_result_frame(job_id);
             return;
         }
@@ -196,7 +180,7 @@ void RestApiClient::send_test_request()
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
                     "}";
-    send_sql_frame(query_test, RequestTest);
+    send_sql_frame(query_test, CustomTypes::RequestTest);
 }
 
 void RestApiClient::send_category_request()
@@ -207,5 +191,5 @@ void RestApiClient::send_category_request()
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
                     "}";
-    send_sql_frame(query_category, RequestCategory);
+    send_sql_frame(query_category, CustomTypes::RequestCategory);
 }

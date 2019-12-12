@@ -5,6 +5,8 @@
 #include <QApplication>
 #include "restapiclient.h"
 #include "mainwindow.h"
+#include <QByteArray>
+#include "replyhandler.h"
 
 class QuizApplication : public QApplication
 {
@@ -15,6 +17,7 @@ public:
 private:
     MainWindow w;
     RestApiClient m_restapiclient;
+    ReplyHandler m_reply_handler;
 };
 
 #endif // QUIZAPPLICATION_H

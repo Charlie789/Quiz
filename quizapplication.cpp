@@ -5,6 +5,7 @@ QuizApplication::QuizApplication(int &argc, char **argv) :
 {
     w.show();
 
+    connect(&m_restapiclient, &RestApiClient::reply_received, &m_reply_handler, &ReplyHandler::reply_received);
     connect(&w, &MainWindow::category_push_button_clicked, &m_restapiclient, &RestApiClient::send_category_request);
     connect(&w, &MainWindow::test_push_button_clicked, &m_restapiclient, &RestApiClient::send_test_request);
 }

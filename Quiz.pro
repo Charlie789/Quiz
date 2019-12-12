@@ -19,11 +19,14 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     quizapplication.cpp \
+    replyhandler.cpp \
     restapiclient.cpp
 
 HEADERS += \
+    customtypes.h \
     mainwindow.h \
     quizapplication.h \
+    replyhandler.h \
     restapiclient.h
 
 FORMS += \
