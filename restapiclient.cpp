@@ -56,121 +56,48 @@ void RestApiClient::send_main_frame()
                            "\"password\":\"t2sw^pjbzqvk1gr5\" "
                            "}"
                            );
-    m_reply_main_frame = m_manager->post(m_request_main_frame, json.toUtf8());
+    auto reply = m_manager->post(m_request_main_frame, json.toUtf8());
+    reply->setProperty("request_type", RequestHello);
 
     qCDebug (restapi) << "ramka główna: " << json.toUtf8();
 
-    connect(m_reply_main_frame, &QNetworkReply::finished, this, &RestApiClient::ready_read_main_frame);
-    connect(m_reply_main_frame, &QNetworkReply::finished, m_reply_main_frame, &QNetworkReply::deleteLater);
-    connect(m_reply_main_frame, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+    connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
+    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
             this, &RestApiClient::slot_error);
-    connect(m_reply_main_frame, &QNetworkReply::sslErrors,
+    connect(reply, &QNetworkReply::sslErrors,
             this, &RestApiClient::slot_ssl_errors);
 }
 
-void RestApiClient::send_sql_frame()
+void RestApiClient::send_sql_frame(QString query, RequestType request_type)
 {
-    QString json = QString("{ "
-                           "\"commands\":\"SELECT * FROM TEST;\", "
-                           "\"limit\":1000, "
-                           "\"separator\":\";\", "
-                           "\"stop_on_error\":\"yes\" "
-                           "}"
-                           );
-    m_reply_sql_frame = m_manager->post(m_request_sql_frame, json.toUtf8());
+    QString json = QString(query);
+    auto reply = m_manager->post(m_request_sql_frame, json.toUtf8());
+    reply->setProperty("request_type", request_type);
 
     qCDebug (restapi) << "ramka główna: " << json.toUtf8();
 
-    connect(m_reply_sql_frame, &QNetworkReply::finished, this, &RestApiClient::ready_read_sql_frame);
-    connect(m_reply_sql_frame, &QNetworkReply::finished, m_reply_sql_frame, &QNetworkReply::deleteLater);
-    connect(m_reply_sql_frame, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+    connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
+    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
             this, &RestApiClient::slot_error);
-    connect(m_reply_sql_frame, &QNetworkReply::sslErrors,
+    connect(reply, &QNetworkReply::sslErrors,
             this, &RestApiClient::slot_ssl_errors);
 }
 
-void RestApiClient::send_result_frame()
+void RestApiClient::send_result_frame(QString job_id)
 {
-    m_reply_result_frame = m_manager->get(m_request_result_frame);
+    QString job_endpoint = "/dbapi/v3/sql_jobs/" + job_id;
+    qDebug() << job_endpoint;
+    m_result_frame_qurl.setPath(job_endpoint);
+    m_request_result_frame.setUrl(m_result_frame_qurl);
+    auto reply = m_manager->get(m_request_result_frame);
+    reply->setProperty("request_type", RequestResponse);
+    reply->setProperty("job_id", job_id);
 
-    connect(m_reply_result_frame, &QNetworkReply::finished, this, &RestApiClient::ready_read_result_frame);
-    connect(m_reply_result_frame, &QNetworkReply::finished, m_reply_result_frame, &QNetworkReply::deleteLater);
-    connect(m_reply_result_frame, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+    connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
+    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
             this, &RestApiClient::slot_error);
-    connect(m_reply_result_frame, &QNetworkReply::sslErrors,
+    connect(reply, &QNetworkReply::sslErrors,
             this, &RestApiClient::slot_ssl_errors);
-}
-
-void RestApiClient::ready_read_main_frame()
-{
-    if(m_reply_main_frame->error()== QNetworkReply::OperationCanceledError){
-        return;
-    }
-
-    QByteArray reply_array = m_reply_main_frame->readAll();
-    qDebug() << m_reply_main_frame->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-
-    if(m_reply_main_frame->error() == QNetworkReply::NoError){
-        qCDebug(restapi) << "main frame response:";
-        qCDebug(restapi) << reply_array;
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
-        QString token = jsonResponse.object()["token"].toString();
-        QByteArray data = token.toLocal8Bit();
-        QString headerData = "Bearer " + data;
-        qDebug() << headerData;
-        m_request_sql_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
-        m_request_result_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
-        qDebug() << m_request_sql_frame.rawHeader("Authorization");
-        send_sql_frame();
-        return;
-    }
-
-    qCDebug(restapi) << "Błąd pobierania danych main_frame:" << m_reply_main_frame->errorString() << m_reply_main_frame->error();
-}
-
-void RestApiClient::ready_read_sql_frame()
-{
-    if(m_reply_sql_frame->error()== QNetworkReply::OperationCanceledError){
-        return;
-    }
-
-    QByteArray reply_array = m_reply_sql_frame->readAll();
-    qDebug() << m_reply_sql_frame->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-
-    if(m_reply_sql_frame->error() == QNetworkReply::NoError){
-        qCDebug(restapi) << "sql response:";
-        qCDebug(restapi) << reply_array;
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
-        QString job_id = jsonResponse.object()["id"].toString();
-        QString job_endpoint = "/dbapi/v3/sql_jobs/" + job_id;
-        qDebug() << job_id;
-        qDebug() << job_endpoint;
-        m_result_frame_qurl.setPath(job_endpoint);
-        m_request_result_frame.setUrl(m_result_frame_qurl);
-        send_result_frame();
-        return;
-    }
-
-    qCDebug(restapi) << "Błąd pobierania danych sql_frame:" << m_reply_sql_frame->errorString() << m_reply_sql_frame->error();
-}
-
-void RestApiClient::ready_read_result_frame()
-{
-    if(m_reply_result_frame->error()== QNetworkReply::OperationCanceledError){
-        return;
-    }
-
-    QByteArray reply_array = m_reply_result_frame->readAll();
-    qDebug() << m_reply_result_frame->attribute(QNetworkRequest::HttpStatusCodeAttribute);
-
-    if(m_reply_result_frame->error() == QNetworkReply::NoError){
-        qCDebug(restapi) << "sql result response:";
-        qCDebug(restapi) << reply_array;
-        return;
-    }
-
-    qCDebug(restapi) << "Błąd pobierania danych sql_result_frame:" << m_reply_result_frame->errorString() << m_reply_result_frame->error();
-
 }
 
 void RestApiClient::slot_ssl_errors(const QList<QSslError> &errors)
@@ -180,6 +107,76 @@ void RestApiClient::slot_ssl_errors(const QList<QSslError> &errors)
 
 void RestApiClient::reply_finished(QNetworkReply *reply)
 {
+    if(!reply){
+        qWarning() << "zjebałeś";
+        return;
+    }
+
+    QByteArray reply_array = reply->readAll();
+    qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    if(reply->error() == QNetworkReply::NoError){
+        switch (reply->property("request_type").value<RequestType>()){
+        case RequestHello:
+        {
+            qCDebug(restapi) << "main frame response:";
+            qCDebug(restapi) << reply_array;
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+            QString token = jsonResponse.object()["token"].toString();
+            QByteArray data = token.toLocal8Bit();
+            QString headerData = "Bearer " + data;
+            qDebug() << headerData;
+            m_request_sql_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
+            m_request_result_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
+            return;
+        }
+        case RequestResponse:
+        {
+            QString job_id = reply->property("job_id").toString();
+            RequestType request_type = m_result_map.take(job_id);
+            switch (request_type) {
+            case RequestTest:
+            {
+                qCDebug(restapi) << "test result response:";
+                qCDebug(restapi) << reply_array;
+                break;
+            }
+            case RequestCategory:
+            {
+                qCDebug(restapi) << "category result response:";
+                qCDebug(restapi) << reply_array;
+                break;
+            }
+            default:
+                qCDebug(restapi) << "nieznane zapytanie sql";
+                break;
+            }
+            return;
+        }
+        case RequestTest:
+        {
+            qCDebug(restapi) << "RequestTest response:";
+            qCDebug(restapi) << reply_array;
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+            QString job_id = jsonResponse.object()["id"].toString();
+            m_result_map.insert(job_id, reply->property("request_type").value<RequestType>());
+            send_result_frame(job_id);
+            return;
+        }
+        case RequestCategory:
+        {
+            qCDebug(restapi) << "RequestCategory response:";
+            qCDebug(restapi) << reply_array;
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+            QString job_id = jsonResponse.object()["id"].toString();
+            m_result_map.insert(job_id, reply->property("request_type").value<RequestType>());
+            send_result_frame(job_id);
+            return;
+        }
+        default:
+            qCDebug(restapi) << "nieznane żądanie z RestApi";
+            break;
+        }
+    }
     if (reply->error()) {
         qCWarning(restapi) << reply->errorString();
         return;
@@ -189,4 +186,26 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
 void RestApiClient::slot_error(QNetworkReply::NetworkError)
 {
     qCWarning(restapi) << "wystąpił błąd";
+}
+
+void RestApiClient::send_test_request()
+{
+    QString query_test = "{ "
+                    "\"commands\":\"SELECT * FROM TEST;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query_test, RequestTest);
+}
+
+void RestApiClient::send_category_request()
+{
+    QString query_category = "{ "
+                    "\"commands\":\"SELECT * FROM CATEGORY;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query_category, RequestCategory);
 }

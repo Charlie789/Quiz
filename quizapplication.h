@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QApplication>
 #include "restapiclient.h"
+#include "mainwindow.h"
 
 class QuizApplication : public QApplication
 {
@@ -12,6 +13,7 @@ public:
     QuizApplication(int &argc, char **argv);
 
 private:
+    MainWindow w;
     RestApiClient m_restapiclient;
 };
 
