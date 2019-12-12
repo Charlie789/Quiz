@@ -46,10 +46,10 @@ RestApiClient::RestApiClient(QObject *parent):
     m_request_result_frame.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     m_request_result_frame.setSslConfiguration(config);
 
-    send_main_frame();
+    send_authorization_frame();
 }
 
-void RestApiClient::send_main_frame()
+void RestApiClient::send_authorization_frame()
 {
     QString json = QString("{ "
                            "\"userid\":\"htf63494\", "
@@ -59,7 +59,7 @@ void RestApiClient::send_main_frame()
     auto reply = m_manager->post(m_request_main_frame, json.toUtf8());
     reply->setProperty("request_type", RequestHello);
 
-    qCDebug (restapi) << "ramka główna: " << json.toUtf8();
+    qCDebug(restapi) << "Ramka authorization: " << json.toUtf8();
 
     connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
     connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
@@ -74,7 +74,7 @@ void RestApiClient::send_sql_frame(QString query, RequestType request_type)
     auto reply = m_manager->post(m_request_sql_frame, json.toUtf8());
     reply->setProperty("request_type", request_type);
 
-    qCDebug (restapi) << "ramka główna: " << json.toUtf8();
+    qCDebug(restapi) << "Ramka sql: " << json.toUtf8();
 
     connect(reply, &QNetworkReply::finished, reply, &QNetworkReply::deleteLater);
     connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
@@ -86,7 +86,7 @@ void RestApiClient::send_sql_frame(QString query, RequestType request_type)
 void RestApiClient::send_result_frame(QString job_id)
 {
     QString job_endpoint = "/dbapi/v3/sql_jobs/" + job_id;
-    qDebug() << job_endpoint;
+    qCDebug(restapi) << job_endpoint;
     m_result_frame_qurl.setPath(job_endpoint);
     m_request_result_frame.setUrl(m_result_frame_qurl);
     auto reply = m_manager->get(m_request_result_frame);
@@ -108,23 +108,23 @@ void RestApiClient::slot_ssl_errors(const QList<QSslError> &errors)
 void RestApiClient::reply_finished(QNetworkReply *reply)
 {
     if(!reply){
-        qWarning() << "zjebałeś";
+        qWarning(restapi) << "brak obiektu, wysyłającego zapytanie";
         return;
     }
 
     QByteArray reply_array = reply->readAll();
-    qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    qCDebug(restapi) << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     if(reply->error() == QNetworkReply::NoError){
         switch (reply->property("request_type").value<RequestType>()){
         case RequestHello:
         {
-            qCDebug(restapi) << "main frame response:";
+            qCDebug(restapi) << "Odpowiedź ramki autoryzacyjnej:";
             qCDebug(restapi) << reply_array;
             QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
             QString token = jsonResponse.object()["token"].toString();
             QByteArray data = token.toLocal8Bit();
             QString headerData = "Bearer " + data;
-            qDebug() << headerData;
+            qCDebug(restapi) << headerData;
             m_request_sql_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
             m_request_result_frame.setRawHeader(QByteArray("Authorization"), headerData.toLocal8Bit());
             return;
@@ -173,7 +173,7 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
             return;
         }
         default:
-            qCDebug(restapi) << "nieznane żądanie z RestApi";
+            qCDebug(restapi) << "nieznane zapytanie do RestApi";
             break;
         }
     }

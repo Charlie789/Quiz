@@ -33,7 +33,7 @@ private:
     QMap<QString, RequestType> m_result_map;
 
 private slots:
-    void send_main_frame();
+    void send_authorization_frame();
     void send_sql_frame(QString query, RequestType request_type);
     void send_result_frame(QString job_id);
     void ready_read_main_frame();

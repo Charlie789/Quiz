@@ -13,7 +13,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::on_test_push_button_clicked()
 {
     test_push_button_clicked();
