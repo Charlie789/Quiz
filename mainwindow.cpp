@@ -16,10 +16,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_test_push_button_clicked()
 {
-    test_push_button_clicked();
+    emit test_push_button_clicked();
 }
 
 void MainWindow::on_category_push_button_clicked()
 {
-    category_push_button_clicked();
+    emit category_push_button_clicked();
 }

@@ -12,7 +12,7 @@ enum RequestType {
     RequestCategory
 };
 
-};
+}
 Q_DECLARE_METATYPE(CustomTypes::RequestType)
 
 #endif // CUSTOMTYPES_H
