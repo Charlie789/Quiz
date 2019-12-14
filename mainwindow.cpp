@@ -28,7 +28,9 @@ void MainWindow::set_models(QStandardItemModel* model, CustomTypes::RequestType 
     case CustomTypes::RequestTest:
     {
         m_test_model = model;
-        ui->test_list_view->setModel(m_test_model);
+        ui->tableView->setModel(m_test_model);
+        ui->tableView->setColumnWidth(0, 250);
+        ui->tableView->horizontalHeader()->setStretchLastSection(true);
         break;
     }
     default:

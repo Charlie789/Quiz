@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSqlTableModel>
 
 ReplyHandler::ReplyHandler(QObject *parent) : QObject(parent)
 {
@@ -17,14 +18,20 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
     QJsonObject obj = jsonArray[0].toObject();
     QJsonArray column_names = obj["columns"].toArray();
     QJsonArray rows = obj["rows"].toArray();
-    qDebug() <<  column_names;
-    qDebug() << rows;
-    QJsonArray val = rows[2].toArray();
-    qDebug() << val[0];
     switch(request_type){
     case CustomTypes::RequestTest:
     {
-        qDebug() << rows.count();
+        m_test_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            rowData << new QStandardItem(val[1].toString());
+            rowData << new QStandardItem(val[2].toString());
+            m_test_model.appendRow(rowData);
+        }
+        m_test_model.setHorizontalHeaderItem(0, new QStandardItem("Data utworzenia"));
+        m_test_model.setHorizontalHeaderItem(1, new QStandardItem("Nazwa testu"));
+        emit model_ready(&m_test_model, CustomTypes::RequestTest);
         break;
     }
     case CustomTypes::RequestCategory:

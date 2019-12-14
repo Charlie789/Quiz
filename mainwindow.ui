@@ -50,14 +50,20 @@
      </rect>
     </property>
     <widget class="QWidget" name="test_page">
-     <widget class="QListView" name="test_list_view">
+     <widget class="QTableView" name="tableView">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>70</y>
-        <width>311</width>
-        <height>331</height>
+        <x>30</x>
+        <y>40</y>
+        <width>721</width>
+        <height>391</height>
        </rect>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="showDropIndicator" stdset="0">
+       <bool>false</bool>
       </property>
      </widget>
     </widget>
