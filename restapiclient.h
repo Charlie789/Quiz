@@ -8,7 +8,7 @@
 #include <QPointer>
 #include <QLoggingCategory>
 #include <QMap>
-#include "CustomTypes.h"
+#include "customtypes.h"
 
 class RestApiClient : public QObject
 {
@@ -40,6 +40,7 @@ private slots:
 public slots:
     void send_test_request();
     void send_category_request();
+    void send_add_category_request(const QString category_name);
 
 signals:
     void reply_received(CustomTypes::RequestType request_type, QByteArray reply_array);

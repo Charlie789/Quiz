@@ -156,9 +156,10 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
             send_result_frame(job_id);
             return;
         }
-        default:
-            qCDebug(restapi) << "nieznane zapytanie do RestApi";
-            break;
+        case CustomTypes::RequestAddCategory:
+        {
+            send_category_request();
+        }
         }
     }
     if (reply->error()) {
@@ -192,4 +193,15 @@ void RestApiClient::send_category_request()
                     "\"stop_on_error\":\"yes\" "
                     "}";
     send_sql_frame(query_category, CustomTypes::RequestCategory);
+}
+
+void RestApiClient::send_add_category_request(const QString category_name)
+{
+    QString query_category = QString("{ "
+                    "\"commands\":\"INSERT INTO CATEGORY(CATEGORY_NAME, PARENT_CATEGORY_ID) VALUES ('%1', NULL);\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}").arg(category_name);
+    send_sql_frame(query_category, CustomTypes::RequestAddCategory);
 }

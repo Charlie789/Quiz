@@ -9,7 +9,8 @@ enum RequestType {
     RequestHello,
     RequestResponse,
     RequestTest,
-    RequestCategory
+    RequestCategory,
+    RequestAddCategory
 };
 
 }
