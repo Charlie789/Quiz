@@ -18,8 +18,6 @@ private:
     MainWindow w;
     RestApiClient m_restapiclient;
     ReplyHandler m_reply_handler;
-
-    QStandardItemModel m_category_model;
 };
 
 #endif // QUIZAPPLICATION_H

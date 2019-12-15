@@ -23,18 +23,23 @@ public slots:
 private slots:
     void on_test_push_button_clicked();
     void on_category_push_button_clicked();
-
     void on_add_category_push_button_clicked();
+    void on_question_variant_push_button_clicked();
+    void on_variant_question_push_button_clicked();
 
 signals:
     void test_push_button_clicked();
     void category_push_button_clicked();
     void add_category_push_button_clicked(const QString category_name);
+    void question_variant_push_button_clicked();
+    void request_answers_for_question(const QString question_id);
 
 private:
     Ui::MainWindow *ui;
 
     QStandardItemModel* m_category_model;
     QStandardItemModel* m_test_model;
+    QStandardItemModel* m_question_model;
+    QStandardItemModel* m_answer_for_question_model;
 };
 #endif // MAINWINDOW_H

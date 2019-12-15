@@ -156,10 +156,33 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
             send_result_frame(job_id);
             return;
         }
+        case CustomTypes::RequestQuestion:
+        {
+            qCDebug(restapi) << "RequestQuestion response:";
+            qCDebug(restapi) << reply_array;
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+            QString job_id = jsonResponse.object()["id"].toString();
+            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
+            send_result_frame(job_id);
+            return;
+        }
+        case CustomTypes::RequestAnswerForQuestion:
+        {
+            qCDebug(restapi) << "RequestAnswerForQuestion response:";
+            qCDebug(restapi) << reply_array;
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+            QString job_id = jsonResponse.object()["id"].toString();
+            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
+            send_result_frame(job_id);
+            return;
+        }
         case CustomTypes::RequestAddCategory:
         {
             send_category_request();
+            break;
         }
+        default:
+            break;
         }
     }
     if (reply->error()) {
@@ -175,33 +198,66 @@ void RestApiClient::slot_error(QNetworkReply::NetworkError)
 
 void RestApiClient::send_test_request()
 {
-    QString query_test = "{ "
+    QString query = "{ "
                     "\"commands\":\"SELECT * FROM TEST;\", "
                     "\"limit\":1000, "
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
                     "}";
-    send_sql_frame(query_test, CustomTypes::RequestTest);
+    send_sql_frame(query, CustomTypes::RequestTest);
 }
 
 void RestApiClient::send_category_request()
 {
-    QString query_category = "{ "
+    QString query = "{ "
                     "\"commands\":\"SELECT * FROM CATEGORY;\", "
                     "\"limit\":1000, "
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
                     "}";
-    send_sql_frame(query_category, CustomTypes::RequestCategory);
+    send_sql_frame(query, CustomTypes::RequestCategory);
 }
 
 void RestApiClient::send_add_category_request(const QString category_name)
 {
-    QString query_category = QString("{ "
+    QString query = QString("{ "
                     "\"commands\":\"INSERT INTO CATEGORY(CATEGORY_NAME, PARENT_CATEGORY_ID) VALUES ('%1', NULL);\", "
                     "\"limit\":1000, "
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
                     "}").arg(category_name);
-    send_sql_frame(query_category, CustomTypes::RequestAddCategory);
+    send_sql_frame(query, CustomTypes::RequestAddCategory);
+}
+
+void RestApiClient::send_question_request()
+{
+    QString query = "{ "
+                    "\"commands\":\"SELECT * FROM QUESTION;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestQuestion);
+}
+
+void RestApiClient::send_answer_for_question_request(const QString question_id)
+{
+    QString query = QString("{ "
+                    "\"commands\":\"SELECT id_answer, question_id FROM ANSWER WHERE question_id = %1;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}").arg(question_id);
+    send_sql_frame(query, CustomTypes::RequestAnswerForQuestion);
+}
+
+void RestApiClient::send_add_question_variant_request(const QString question_id, const QString answer_order)
+{
+    QString query = QString("{ "
+                            "\"commands\":\"INSERT INTO QUESTION_VARIANT(QUESTION_ID, ANSWER_ORDER) VALUES (%1, '%2');\", "
+                            "\"limit\":1000, "
+                            "\"separator\":\";\", "
+                            "\"stop_on_error\":\"yes\" "
+                            "}").arg(question_id, answer_order);
+    send_sql_frame(query, CustomTypes::RequestAddQuestionVariant);
 }

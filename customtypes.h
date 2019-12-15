@@ -10,7 +10,10 @@ enum RequestType {
     RequestResponse,
     RequestTest,
     RequestCategory,
-    RequestAddCategory
+    RequestAddCategory,
+    RequestQuestion,
+    RequestAnswerForQuestion,
+    RequestAddQuestionVariant
 };
 
 }

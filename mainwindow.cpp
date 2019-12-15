@@ -33,6 +33,16 @@ void MainWindow::set_models(QStandardItemModel* model, CustomTypes::RequestType 
         ui->tableView->horizontalHeader()->setStretchLastSection(true);
         break;
     }
+    case CustomTypes::RequestQuestion:
+        m_question_model = model;
+        ui->variant_question_list_view->setModel(m_question_model);
+        break;
+    case CustomTypes::RequestAnswerForQuestion:
+        m_answer_for_question_model = model;
+        for (int answer = 0; answer < m_answer_for_question_model->rowCount(); ++answer) {
+            qDebug() << m_answer_for_question_model->data(m_answer_for_question_model->index(answer,0));
+        }
+        break;
     default:
         break;
     }
@@ -55,4 +65,17 @@ void MainWindow::on_add_category_push_button_clicked()
 {
     emit add_category_push_button_clicked(ui->category_line_edit->text());
     ui->category_line_edit->clear();
+}
+
+void MainWindow::on_question_variant_push_button_clicked()
+{
+    ui->stacked_widget->setCurrentIndex(2);
+    emit question_variant_push_button_clicked();
+}
+
+void MainWindow::on_variant_question_push_button_clicked()
+{
+    QModelIndexList selected = ui->variant_question_list_view->selectionModel()->selectedIndexes();
+    QString question_id = selected.at(0).data(Qt::UserRole+1).toString();
+    emit request_answers_for_question(question_id);
 }

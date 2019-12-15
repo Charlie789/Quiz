@@ -15,9 +15,11 @@ public:
 private:
     QStandardItemModel m_category_model;
     QStandardItemModel m_test_model;
+    QStandardItemModel m_question_model;
 
 signals:
     void model_ready(QStandardItemModel* model, CustomTypes::RequestType request_type);
+    void question_variant_ready(const QString question_id, const QString answer_order);
 
 public slots:
     void reply_received(CustomTypes::RequestType request_type, QByteArray reply_array);
