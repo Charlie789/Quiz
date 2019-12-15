@@ -26,6 +26,7 @@ private slots:
     void on_add_category_push_button_clicked();
     void on_question_variant_push_button_clicked();
     void on_variant_question_push_button_clicked();
+    void edit_category(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>());
 
 signals:
     void test_push_button_clicked();
@@ -33,6 +34,7 @@ signals:
     void add_category_push_button_clicked(const QString category_name);
     void question_variant_push_button_clicked();
     void request_answers_for_question(const QString question_id);
+    void category_updated(const QString category_id, const QString category_name);
 
 private:
     Ui::MainWindow *ui;

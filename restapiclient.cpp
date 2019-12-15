@@ -261,3 +261,14 @@ void RestApiClient::send_add_question_variant_request(const QString question_id,
                             "}").arg(question_id, answer_order);
     send_sql_frame(query, CustomTypes::RequestAddQuestionVariant);
 }
+
+void RestApiClient::send_update_category_request(const QString category_id, const QString category_name)
+{
+    QString query = QString("{ "
+                            "\"commands\":\"UPDATE CATEGORY SET category_name = '%1' WHERE id_category = %2;\", "
+                            "\"limit\":1000, "
+                            "\"separator\":\";\", "
+                            "\"stop_on_error\":\"yes\" "
+                            "}").arg(category_name, category_id);
+    send_sql_frame(query, CustomTypes::RequestUpdateCategory);
+}

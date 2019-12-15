@@ -23,6 +23,7 @@ void MainWindow::set_models(QStandardItemModel* model, CustomTypes::RequestType 
     {
         m_category_model = model;
         ui->category_list_view->setModel(m_category_model);
+        connect(m_category_model, &QStandardItemModel::dataChanged, this, &MainWindow::edit_category);
         break;
     }
     case CustomTypes::RequestTest:
@@ -78,4 +79,12 @@ void MainWindow::on_variant_question_push_button_clicked()
     QModelIndexList selected = ui->variant_question_list_view->selectionModel()->selectedIndexes();
     QString question_id = selected.at(0).data(Qt::UserRole+1).toString();
     emit request_answers_for_question(question_id);
+}
+
+void MainWindow::edit_category(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    qDebug() << topLeft.data();
+    qDebug() << bottomRight.data();
+    qDebug() << roles.at(0);
+    emit category_updated(topLeft.data(Qt::UserRole + 1).toString(), topLeft.data().toString());
 }

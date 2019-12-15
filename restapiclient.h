@@ -44,6 +44,7 @@ public slots:
     void send_question_request();
     void send_answer_for_question_request(const QString question_id);
     void send_add_question_variant_request(const QString question_id, const QString answer_order);
+    void send_update_category_request(const QString category_id, const QString category_name);
 
 signals:
     void reply_received(CustomTypes::RequestType request_type, QByteArray reply_array);
