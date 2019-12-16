@@ -40,9 +40,9 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
         m_category_model.clear();
         for (int row_index = 0; row_index < rows.count(); row_index++){
             QJsonArray val = rows[row_index].toArray();
-            QStandardItem item(val[1].toString());
-            item.setData(val[0].toString());
-            m_category_model.appendRow(&item);
+            QStandardItem* item = new QStandardItem(val[1].toString());
+            item->setData(val[0].toString());
+            m_category_model.appendRow(item);
         }
         emit model_ready(&m_category_model, CustomTypes::RequestCategory);
         break;

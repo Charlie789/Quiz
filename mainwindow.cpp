@@ -70,7 +70,7 @@ void MainWindow::on_add_category_push_button_clicked()
 
 void MainWindow::on_question_variant_push_button_clicked()
 {
-    ui->stacked_widget->setCurrentIndex(2);
+    ui->stacked_widget->setCurrentIndex(3);
     emit question_variant_push_button_clicked();
 }
 
@@ -81,10 +81,37 @@ void MainWindow::on_variant_question_push_button_clicked()
     emit request_answers_for_question(question_id);
 }
 
-void MainWindow::edit_category(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+void MainWindow::edit_category(const QModelIndex &topLeft, const QModelIndex, const QVector<int>)
 {
-    qDebug() << topLeft.data();
-    qDebug() << bottomRight.data();
-    qDebug() << roles.at(0);
     emit category_updated(topLeft.data(Qt::UserRole + 1).toString(), topLeft.data().toString());
+}
+
+void MainWindow::on_add_question_push_button_clicked()
+{
+    ui->stacked_widget->setCurrentIndex(2);
+
+}
+
+void MainWindow::on_add_question_to_db_push_button_clicked()
+{
+    QList<QString> new_question;
+    QModelIndexList selected = ui->category_list_view->selectionModel()->selectedIndexes();
+    if (selected.isEmpty())
+        return;
+    new_question << selected.at(0).data(Qt::UserRole+1).toString();
+    new_question << ui->question_text_edit->toPlainText();
+    new_question << ui->correct_answer_line_edit->text();
+    new_question << ui->wrong_answer1_line_edit->text();
+    new_question << ui->wrong_answer2_line_edit->text();
+    new_question << ui->wrong_answer3_line_edit->text();
+    for (int i = 0; i < new_question.count(); ++i){
+        if (new_question[i].isEmpty())
+            return;
+    }
+    ui->question_text_edit->clear();
+    ui->correct_answer_line_edit->clear();
+    ui->wrong_answer1_line_edit->clear();
+    ui->wrong_answer2_line_edit->clear();
+    ui->wrong_answer3_line_edit->clear();
+    emit add_question_push_button_clicked(new_question);
 }

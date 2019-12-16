@@ -272,3 +272,15 @@ void RestApiClient::send_update_category_request(const QString category_id, cons
                             "}").arg(category_name, category_id);
     send_sql_frame(query, CustomTypes::RequestUpdateCategory);
 }
+
+void RestApiClient::send_add_question_request(const QList<QString> new_question)
+{
+    QString query = QString("{ "
+                            "\"commands\":\"CALL add_question('%1', '%2', '%3', '%4', '%5', %6, 1);\", "
+                            "\"limit\":1000, "
+                            "\"separator\":\";\", "
+                            "\"stop_on_error\":\"yes\" "
+                            "}").arg(new_question[1], new_question[2], new_question[3], new_question[4],
+            new_question[5], new_question[0]);
+    send_sql_frame(query, CustomTypes::RequestAddQuestion);
+}
