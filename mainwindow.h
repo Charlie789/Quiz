@@ -26,7 +26,7 @@ private slots:
     void on_add_category_push_button_clicked();
     void on_question_variant_push_button_clicked();
     void on_variant_question_push_button_clicked();
-    void edit_category(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>());
+    void edit_category(const QModelIndex &topLeft, const QModelIndex, const QVector<int> = QVector<int>());
 
 signals:
     void test_push_button_clicked();

@@ -81,10 +81,7 @@ void MainWindow::on_variant_question_push_button_clicked()
     emit request_answers_for_question(question_id);
 }
 
-void MainWindow::edit_category(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+void MainWindow::edit_category(const QModelIndex &topLeft, const QModelIndex, const QVector<int>)
 {
-    qDebug() << topLeft.data();
-    qDebug() << bottomRight.data();
-    qDebug() << roles.at(0);
     emit category_updated(topLeft.data(Qt::UserRole + 1).toString(), topLeft.data().toString());
 }
