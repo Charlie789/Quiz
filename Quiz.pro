@@ -37,6 +37,5 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-#INCLUDEPATH += "C:\Program Files (x86)\GnuWin32\include\openssl"
-#LIBS += -L"C:\Program Files (x86)\GnuWin32\bin" -leay32
-#LIBS += -L"C:\Program Files (x86)\GnuWin32\bin" -lssl32
+LIBS += -L$$OUT_PWD -leay32
+LIBS += -L$$OUT_PWD -lssl32
