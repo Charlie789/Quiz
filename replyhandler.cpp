@@ -107,6 +107,40 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
         emit question_variant_ready(question_id, answer_order);
         break;
     }
+    case CustomTypes::RequestCreatedTestWithZerosRequest:
+    {
+        m_created_test_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            rowData << new QStandardItem(val[0].toString());
+            rowData << new QStandardItem(val[1].toString());
+            rowData << new QStandardItem(val[2].toString());
+            m_created_test_model.appendRow(rowData);
+        }
+        m_created_test_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwisko"));
+        m_created_test_model.setHorizontalHeaderItem(1, new QStandardItem("Imię"));
+        m_created_test_model.setHorizontalHeaderItem(2, new QStandardItem("Utworzone testy"));
+        emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTestWithZerosRequest);
+        break;
+    }
+    case CustomTypes::RequestCreatedTestWithoutZerosRequest:
+    {
+        m_created_test_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            rowData << new QStandardItem(val[0].toString());
+            rowData << new QStandardItem(val[1].toString());
+            rowData << new QStandardItem(val[2].toString());
+            m_created_test_model.appendRow(rowData);
+        }
+        m_created_test_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwisko"));
+        m_created_test_model.setHorizontalHeaderItem(1, new QStandardItem("Imię"));
+        m_created_test_model.setHorizontalHeaderItem(2, new QStandardItem("Utworzone testy"));
+        emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTestWithoutZerosRequest);
+        break;
+    }
     default:
         break;
     }

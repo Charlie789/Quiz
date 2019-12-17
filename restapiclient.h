@@ -46,6 +46,8 @@ public slots:
     void send_add_question_variant_request(const QString question_id, const QString answer_order);
     void send_update_category_request(const QString category_id, const QString category_name);
     void send_add_question_request(const QList<QString> new_question);
+    void send_created_test_with_zeros_request();
+    void send_created_test_without_zeros_request();
 
 signals:
     void reply_received(CustomTypes::RequestType request_type, QByteArray reply_array);

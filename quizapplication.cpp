@@ -16,4 +16,6 @@ QuizApplication::QuizApplication(int &argc, char **argv) :
     connect(&w, &MainWindow::request_answers_for_question, &m_restapiclient, &RestApiClient::send_answer_for_question_request);
     connect(&w, &MainWindow::category_updated, &m_restapiclient, &RestApiClient::send_update_category_request);
     connect(&w, &MainWindow::add_question_push_button_clicked, &m_restapiclient, &RestApiClient::send_add_question_request);
+    connect(&w, &MainWindow::without_zeros_push_button_clicked, &m_restapiclient, &RestApiClient::send_created_test_without_zeros_request);
+    connect(&w, &MainWindow::with_zeros_push_button_clicked, &m_restapiclient, &RestApiClient::send_created_test_with_zeros_request);
 }

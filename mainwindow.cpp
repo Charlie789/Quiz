@@ -44,6 +44,14 @@ void MainWindow::set_models(QStandardItemModel* model, CustomTypes::RequestType 
             qDebug() << m_answer_for_question_model->data(m_answer_for_question_model->index(answer,0));
         }
         break;
+    case CustomTypes::RequestCreatedTestWithoutZerosRequest:
+    case CustomTypes::RequestCreatedTestWithZerosRequest:
+        m_created_tests_model = model;
+        ui->created_tests_raports_list_view->setModel(m_created_tests_model);
+        ui->created_tests_raports_list_view->setColumnWidth(0,150);
+        ui->created_tests_raports_list_view->setColumnWidth(1,150);
+        ui->created_tests_raports_list_view->setColumnWidth(2,150);
+        break;
     default:
         break;
     }
@@ -114,4 +122,14 @@ void MainWindow::on_add_question_to_db_push_button_clicked()
     ui->wrong_answer2_line_edit->clear();
     ui->wrong_answer3_line_edit->clear();
     emit add_question_push_button_clicked(new_question);
+}
+
+void MainWindow::on_with_zeros_push_button_clicked()
+{
+    emit with_zeros_push_button_clicked();
+}
+
+void MainWindow::on_without_zeros_push_button_clicked()
+{
+    emit without_zeros_push_button_clicked();
 }

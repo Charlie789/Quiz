@@ -176,6 +176,26 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
             send_result_frame(job_id);
             return;
         }
+        case CustomTypes::RequestCreatedTestWithZerosRequest:
+        {
+            qCDebug(restapi) << "RequestCreatedTestWithZeros response:";
+            qCDebug(restapi) << reply_array;
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+            QString job_id = jsonResponse.object()["id"].toString();
+            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
+            send_result_frame(job_id);
+            return;
+        }
+        case CustomTypes::RequestCreatedTestWithoutZerosRequest:
+        {
+            qCDebug(restapi) << "RequestCreatedTestWithoutZeros response:";
+            qCDebug(restapi) << reply_array;
+            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
+            QString job_id = jsonResponse.object()["id"].toString();
+            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
+            send_result_frame(job_id);
+            return;
+        }
         case CustomTypes::RequestAddCategory:
         {
             send_category_request();
@@ -283,4 +303,33 @@ void RestApiClient::send_add_question_request(const QList<QString> new_question)
                             "}").arg(new_question[1], new_question[2], new_question[3], new_question[4],
             new_question[5], new_question[0]);
     send_sql_frame(query, CustomTypes::RequestAddQuestion);
+}
+
+void RestApiClient::send_created_test_with_zeros_request()
+{
+    QString query = "{ "
+                    "\"commands\":\"SELECT u.lname, u.fname, COUNT(q.teacher_id) as liczba_pytan FROM question AS q "
+                        "RIGHT JOIN user AS u ON q.teacher_id = u.id_user "
+                        "GROUP BY u.id_user, u.fname, u.lname;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestCreatedTestWithZerosRequest);
+}
+
+void RestApiClient::send_created_test_without_zeros_request()
+{
+    QString query = "{ "
+                    "\"commands\":\"SELECT u.lname, u.fname, COUNT(q.teacher_id) as liczba_pytan FROM question AS q "
+                        "RIGHT JOIN teacher AS t ON q.teacher_id = t.id_teacher "
+                        "LEFT JOIN user AS u ON t.id_teacher = u.id_user "
+                        "GROUP BY u.id_user, u.fname, u.lname "
+                        "HAVING COUNT(q.teacher_id) > 0 "
+                        "ORDER BY liczba_pytan DESC;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestCreatedTestWithoutZerosRequest);
 }
