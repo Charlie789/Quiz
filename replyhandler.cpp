@@ -75,33 +75,27 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
             QJsonArray val = rows[row_index].toArray();
             id[row_index] = val[0].toString();
             question_id = val[1].toString();
-
         }
-        int num[4]={0},i,j;
+        int num[4] = {0}, i, j;
         bool check;
-        for(i=0;i<4;i++)
-        {
-            check=true;
-            do
-            {
-                num[i]=std::rand() % 4;
-
-                for(j=0;j<i;j++)
-                {
-                    if( num[i]==num[j]){    // checks whether number already exists in  the array
-                        check=false;
+        for(i = 0; i < 4; i++){
+            check = true;
+            do{
+                num[i] = std::rand() % 4;
+                for(j = 0; j < i; j++){
+                    if(num[i] == num[j]){    // checks whether number already exists in  the array
+                        check = false;
                         break;
                     } else
-                        check=true;
+                        check = true;
                 }
-            } while(check==false);
+            } while(check == false);
         }
         QString answer_order;
         for (int row_index = 0; row_index < rows.count(); row_index++){
             answer_order += id[num[row_index]];
             if(row_index < rows.count() - 1)
                 answer_order += ",";
-
         }
         qDebug() << answer_order;
         emit question_variant_ready(question_id, answer_order);
