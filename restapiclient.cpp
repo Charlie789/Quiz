@@ -114,8 +114,9 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
 
     QByteArray reply_array = reply->readAll();
     qCDebug(restapi) << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    CustomTypes::RequestType type_request = reply->property("request_type").value<CustomTypes::RequestType>();
     if(reply->error() == QNetworkReply::NoError){
-        switch (reply->property("request_type").value<CustomTypes::RequestType>()){
+        switch (type_request){
         case CustomTypes::RequestHello:
         {
             qCDebug(restapi) << "Odpowiedź ramki autoryzacyjnej:";
@@ -137,62 +138,17 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
             break;
         }
         case CustomTypes::RequestTest:
-        {
-            qCDebug(restapi) << "RequestTest response:";
-            qCDebug(restapi) << reply_array;
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
-            QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
-            send_result_frame(job_id);
-            return;
-        }
         case CustomTypes::RequestCategory:
-        {
-            qCDebug(restapi) << "RequestCategory response:";
-            qCDebug(restapi) << reply_array;
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
-            QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
-            send_result_frame(job_id);
-            return;
-        }
         case CustomTypes::RequestQuestion:
-        {
-            qCDebug(restapi) << "RequestQuestion response:";
-            qCDebug(restapi) << reply_array;
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
-            QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
-            send_result_frame(job_id);
-            return;
-        }
         case CustomTypes::RequestAnswerForQuestion:
-        {
-            qCDebug(restapi) << "RequestAnswerForQuestion response:";
-            qCDebug(restapi) << reply_array;
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
-            QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
-            send_result_frame(job_id);
-            return;
-        }
         case CustomTypes::RequestCreatedTestWithZerosRequest:
-        {
-            qCDebug(restapi) << "RequestCreatedTestWithZeros response:";
-            qCDebug(restapi) << reply_array;
-            QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
-            QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
-            send_result_frame(job_id);
-            return;
-        }
         case CustomTypes::RequestCreatedTestWithoutZerosRequest:
         {
-            qCDebug(restapi) << "RequestCreatedTestWithoutZeros response:";
+            qCDebug(restapi) << type_request << "response:";
             qCDebug(restapi) << reply_array;
             QJsonDocument jsonResponse = QJsonDocument::fromJson(reply_array);
             QString job_id = jsonResponse.object()["id"].toString();
-            m_result_map.insert(job_id, reply->property("request_type").value<CustomTypes::RequestType>());
+            m_result_map.insert(job_id, type_request);
             send_result_frame(job_id);
             return;
         }
