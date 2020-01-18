@@ -16,6 +16,7 @@ private:
     QStandardItemModel m_category_model;
     QStandardItemModel m_test_model;
     QStandardItemModel m_question_model;
+    QStandardItemModel m_number_of_created_test_model;
     QStandardItemModel m_created_test_model;
 
 signals:

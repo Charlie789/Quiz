@@ -16,6 +16,8 @@ enum RequestType {
     RequestAddQuestionVariant,
     RequestUpdateCategory,
     RequestAddQuestion,
+    RequestNumberOfCreatedTestWithZerosRequest,
+    RequestNumberOfCreatedTestWithoutZerosRequest,
     RequestCreatedTestWithZerosRequest,
     RequestCreatedTestWithoutZerosRequest
 };

@@ -19,6 +19,7 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
     QJsonArray column_names = obj["columns"].toArray();
     qDebug() << column_names;
     QJsonArray rows = obj["rows"].toArray();
+    QString teacher_name;
     switch(request_type){
     case CustomTypes::RequestTest:
     {
@@ -101,40 +102,59 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
         emit question_variant_ready(question_id, answer_order);
         break;
     }
-    case CustomTypes::RequestCreatedTestWithZerosRequest:
+    case CustomTypes::RequestNumberOfCreatedTestWithZerosRequest:
     {
-        m_created_test_model.clear();
+        m_number_of_created_test_model.clear();
         for (int row_index = 0; row_index < rows.count(); row_index++){
             QJsonArray val = rows[row_index].toArray();
             QList<QStandardItem *> rowData;
             rowData << new QStandardItem(val[0].toString());
             rowData << new QStandardItem(val[1].toString());
             rowData << new QStandardItem(val[2].toString());
-            m_created_test_model.appendRow(rowData);
+            m_number_of_created_test_model.appendRow(rowData);
         }
-        m_created_test_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwisko"));
-        m_created_test_model.setHorizontalHeaderItem(1, new QStandardItem("Imię"));
-        m_created_test_model.setHorizontalHeaderItem(2, new QStandardItem("Utworzone testy"));
-        emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTestWithZerosRequest);
+        m_number_of_created_test_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwisko"));
+        m_number_of_created_test_model.setHorizontalHeaderItem(1, new QStandardItem("Imię"));
+        m_number_of_created_test_model.setHorizontalHeaderItem(2, new QStandardItem("Liczba utworzonych testów"));
+        emit model_ready(&m_number_of_created_test_model, CustomTypes::RequestNumberOfCreatedTestWithZerosRequest);
         break;
     }
-    case CustomTypes::RequestCreatedTestWithoutZerosRequest:
+    case CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest:
     {
-        m_created_test_model.clear();
+        m_number_of_created_test_model.clear();
         for (int row_index = 0; row_index < rows.count(); row_index++){
             QJsonArray val = rows[row_index].toArray();
             QList<QStandardItem *> rowData;
             rowData << new QStandardItem(val[0].toString());
             rowData << new QStandardItem(val[1].toString());
             rowData << new QStandardItem(val[2].toString());
-            m_created_test_model.appendRow(rowData);
+            m_number_of_created_test_model.appendRow(rowData);
         }
-        m_created_test_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwisko"));
-        m_created_test_model.setHorizontalHeaderItem(1, new QStandardItem("Imię"));
-        m_created_test_model.setHorizontalHeaderItem(2, new QStandardItem("Utworzone testy"));
+        m_number_of_created_test_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwisko"));
+        m_number_of_created_test_model.setHorizontalHeaderItem(1, new QStandardItem("Imię"));
+        m_number_of_created_test_model.setHorizontalHeaderItem(2, new QStandardItem("Liczba utworzonych testów"));
+        emit model_ready(&m_number_of_created_test_model, CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest);
+        break;
+    }
+    case CustomTypes::RequestCreatedTestWithZerosRequest:
+        m_number_of_created_test_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            if(teacher_name != val[0].toString() + val[1].toString()){
+                teacher_name = val[0].toString() + val[1].toString();
+                rowData << new QStandardItem(val[0].toString());
+                rowData << new QStandardItem(val[1].toString());
+                m_created_test_model.appendRow(rowData);
+            }
+            QStandardItem* teacher_item = m_created_test_model.item(m_created_test_model.rowCount() - 1);
+            QStandardItem* question = new QStandardItem(val[2].toString());
+            teacher_item->appendRow(question);
+        }
         emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTestWithoutZerosRequest);
         break;
-    }
+    case CustomTypes::RequestCreatedTestWithoutZerosRequest:
+        break;
     default:
         break;
     }

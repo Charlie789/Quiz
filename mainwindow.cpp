@@ -47,8 +47,8 @@ void MainWindow::set_models(QStandardItemModel* model, CustomTypes::RequestType 
             qDebug() << m_answer_for_question_model->data(m_answer_for_question_model->index(answer,0));
         }
         break;
-    case CustomTypes::RequestCreatedTestWithoutZerosRequest:
-    case CustomTypes::RequestCreatedTestWithZerosRequest:
+    case CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest:
+    case CustomTypes::RequestNumberOfCreatedTestWithZerosRequest:
         m_created_tests_model = model;
         create_chart();
         break;

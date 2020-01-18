@@ -141,6 +141,8 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
         case CustomTypes::RequestCategory:
         case CustomTypes::RequestQuestion:
         case CustomTypes::RequestAnswerForQuestion:
+        case CustomTypes::RequestNumberOfCreatedTestWithZerosRequest:
+        case CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest:
         case CustomTypes::RequestCreatedTestWithZerosRequest:
         case CustomTypes::RequestCreatedTestWithoutZerosRequest:
         {
@@ -261,12 +263,41 @@ void RestApiClient::send_add_question_request(const QList<QString> new_question)
     send_sql_frame(query, CustomTypes::RequestAddQuestion);
 }
 
-void RestApiClient::send_created_test_with_zeros_request()
+void RestApiClient::send_number_of_created_test_with_zeros_request()
 {
     QString query = "{ "
                     "\"commands\":\"SELECT u.lname, u.fname, COUNT(q.teacher_id) as liczba_pytan FROM question AS q "
                         "RIGHT JOIN user AS u ON q.teacher_id = u.id_user "
                         "GROUP BY u.id_user, u.fname, u.lname;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestNumberOfCreatedTestWithZerosRequest);
+}
+
+void RestApiClient::send_number_of_created_test_without_zeros_request()
+{
+    QString query = "{ "
+                    "\"commands\":\"SELECT u.lname, u.fname, COUNT(q.teacher_id) as liczba_pytan FROM question AS q "
+                        "RIGHT JOIN teacher AS t ON q.teacher_id = t.id_teacher "
+                        "LEFT JOIN user AS u ON t.id_teacher = u.id_user "
+                        "GROUP BY u.id_user, u.fname, u.lname "
+                        "HAVING COUNT(q.teacher_id) > 0 "
+                        "ORDER BY liczba_pytan DESC;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest);
+}
+
+void RestApiClient::send_created_test_with_zeros_request()
+{
+    QString query = "{ "
+                    "\"commands\":\"SELECT u.lname, u.fname, q.contents FROM question AS q "
+                        "RIGHT JOIN teacher AS t ON q.teacher_id = t.id_teacher "
+                        "LEFT JOIN user AS u ON t.id_teacher = u.id_user;\", "
                     "\"limit\":1000, "
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
@@ -277,12 +308,9 @@ void RestApiClient::send_created_test_with_zeros_request()
 void RestApiClient::send_created_test_without_zeros_request()
 {
     QString query = "{ "
-                    "\"commands\":\"SELECT u.lname, u.fname, COUNT(q.teacher_id) as liczba_pytan FROM question AS q "
-                        "RIGHT JOIN teacher AS t ON q.teacher_id = t.id_teacher "
-                        "LEFT JOIN user AS u ON t.id_teacher = u.id_user "
-                        "GROUP BY u.id_user, u.fname, u.lname "
-                        "HAVING COUNT(q.teacher_id) > 0 "
-                        "ORDER BY liczba_pytan DESC;\", "
+                    "\"commands\":\"SELECT u.lname, u.fname, q.contents FROM question AS q "
+                        "INNER JOIN teacher AS t ON q.teacher_id = t.id_teacher "
+                        "LEFT JOIN user AS u ON t.id_teacher = u.id_user;\", "
                     "\"limit\":1000, "
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
