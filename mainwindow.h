@@ -36,6 +36,8 @@ private slots:
     void on_generate_chart_pushbutton_clicked();
     void on_chart_with_zeros_radio_clicked();
     void on_chart_without_zeros_radio_clicked();
+    void on_text_reports_pushbutton_clicked();
+    void on_generate_teacher_raport_pushbutton_clicked();
 
 signals:
     void test_push_button_clicked();
@@ -47,6 +49,7 @@ signals:
     void add_question_push_button_clicked(const QList<QString> new_question);
     void with_zeros_push_button_clicked();
     void without_zeros_push_button_clicked();
+    void generate_teacher_test_clicked();
 
 private:
     Ui::MainWindow *ui;

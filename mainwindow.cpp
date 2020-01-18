@@ -170,3 +170,13 @@ void MainWindow::on_chart_without_zeros_radio_clicked()
     if(!ui->generate_chart_pushbutton->isEnabled())
         ui->generate_chart_pushbutton->setEnabled(true);
 }
+
+void MainWindow::on_text_reports_pushbutton_clicked()
+{
+    ui->stacked_widget->setCurrentIndex(4);
+}
+
+void MainWindow::on_generate_teacher_raport_pushbutton_clicked()
+{
+    emit generate_teacher_test_clicked();
+}

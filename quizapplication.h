@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include <QByteArray>
 #include "replyhandler.h"
+#include "generateteachertest.h"
 
 class QuizApplication : public QApplication
 {
@@ -18,6 +19,7 @@ private:
     MainWindow w;
     RestApiClient m_restapiclient;
     ReplyHandler m_reply_handler;
+    GenerateTeachTest m_generate_teacher_test;
 };
 
 #endif // QUIZAPPLICATION_H
