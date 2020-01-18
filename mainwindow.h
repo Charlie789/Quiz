@@ -49,7 +49,9 @@ signals:
     void add_question_push_button_clicked(const QList<QString> new_question);
     void with_zeros_push_button_clicked();
     void without_zeros_push_button_clicked();
-    void generate_teacher_test_clicked();
+    void generate_full_teacher_report();
+    void generate_teacher_with_question_report();
+    void generate_teacher_without_question_report();
 
 private:
     Ui::MainWindow *ui;

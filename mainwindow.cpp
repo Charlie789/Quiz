@@ -178,5 +178,10 @@ void MainWindow::on_text_reports_pushbutton_clicked()
 
 void MainWindow::on_generate_teacher_raport_pushbutton_clicked()
 {
-    emit generate_teacher_test_clicked();
+    if(ui->teacher_with_question_checkbox->isChecked() && ui->teacher_without_question_checkbox->isChecked())
+        emit generate_full_teacher_report();
+    else if(ui->teacher_with_question_checkbox->isChecked())
+        emit generate_teacher_with_question_report();
+    else if(ui->teacher_without_question_checkbox->isChecked())
+        emit generate_teacher_without_question_report();
 }

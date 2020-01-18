@@ -136,8 +136,8 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
         emit model_ready(&m_number_of_created_test_model, CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest);
         break;
     }
-    case CustomTypes::RequestCreatedTestWithZerosRequest:
-        m_number_of_created_test_model.clear();
+    case CustomTypes::RequestCreatedFullTeacherReportRequest:
+        m_created_test_model.clear();
         for (int row_index = 0; row_index < rows.count(); row_index++){
             QJsonArray val = rows[row_index].toArray();
             QList<QStandardItem *> rowData;
@@ -147,13 +147,51 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
                 rowData << new QStandardItem(val[1].toString());
                 m_created_test_model.appendRow(rowData);
             }
-            QStandardItem* teacher_item = m_created_test_model.item(m_created_test_model.rowCount() - 1);
-            QStandardItem* question = new QStandardItem(val[2].toString());
-            teacher_item->appendRow(question);
+            if(val[2].toString() != ""){
+                QStandardItem* teacher_item = m_created_test_model.item(m_created_test_model.rowCount() - 1);
+                QStandardItem* question = new QStandardItem(val[2].toString());
+                teacher_item->appendRow(question);
+            }
         }
-        emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTestWithoutZerosRequest);
+        emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedFullTeacherReportRequest);
         break;
-    case CustomTypes::RequestCreatedTestWithoutZerosRequest:
+    case CustomTypes::RequestCreatedTeacherWithZerosReportRequest:
+        m_created_test_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            if(teacher_name != val[0].toString() + val[1].toString()){
+                teacher_name = val[0].toString() + val[1].toString();
+                rowData << new QStandardItem(val[0].toString());
+                rowData << new QStandardItem(val[1].toString());
+                m_created_test_model.appendRow(rowData);
+            }
+            if(val[2].toString() != ""){
+                QStandardItem* teacher_item = m_created_test_model.item(m_created_test_model.rowCount() - 1);
+                QStandardItem* question = new QStandardItem(val[2].toString());
+                teacher_item->appendRow(question);
+            }
+        }
+        emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTeacherWithZerosReportRequest);
+        break;
+    case CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest:
+        m_created_test_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            if(teacher_name != val[0].toString() + val[1].toString()){
+                teacher_name = val[0].toString() + val[1].toString();
+                rowData << new QStandardItem(val[0].toString());
+                rowData << new QStandardItem(val[1].toString());
+                m_created_test_model.appendRow(rowData);
+            }
+            if(val[2].toString() != ""){
+                QStandardItem* teacher_item = m_created_test_model.item(m_created_test_model.rowCount() - 1);
+                QStandardItem* question = new QStandardItem(val[2].toString());
+                teacher_item->appendRow(question);
+            }
+        }
+        emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest);
         break;
     default:
         break;

@@ -1,5 +1,4 @@
 #include "generateteachertest.h"
-#include <QTextDocument>
 #include <QPrinter>
 #include <QDesktopServices>
 #include <QDebug>
@@ -12,26 +11,20 @@ GenerateTeachTest::GenerateTeachTest(QObject *parent) : QObject(parent)
 
 void GenerateTeachTest::set_model(QStandardItemModel* model, CustomTypes::RequestType request_type)
 {
-    if(request_type == CustomTypes::RequestCreatedTestWithZerosRequest || request_type == CustomTypes::RequestCreatedTestWithoutZerosRequest){
+    if (request_type == CustomTypes::RequestCreatedFullTeacherReportRequest){
         m_model_teacher_test = model;
-        generate_document();
+        generate_full_report();
+    } else if(request_type == CustomTypes::RequestCreatedTeacherWithZerosReportRequest){
+        m_model_teacher_test = model;
+        generate_teacher_with_question_report();
+    } else if (request_type == CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest){
+        m_model_teacher_test = model;
+        generate_teacher_without_question_report();
     }
 }
 
 void GenerateTeachTest::generate_document()
 {
-    QString html = QString("%1"
-                           "%2"
-                           "<p>&nbsp;</p>"
-                           "<hr>"
-                           "%3"
-                           "<hr>")
-            .arg(generate_header())
-            .arg(generate_frame())
-            .arg(generate_teacher());
-    QTextDocument document;
-    document.setHtml(html);
-
     QPrinter printer(QPrinter::PrinterResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setPaperSize(QPrinter::A4);
@@ -42,9 +35,57 @@ void GenerateTeachTest::generate_document()
     QDesktopServices::openUrl(QUrl("teacher_test.pdf"));
 }
 
+void GenerateTeachTest::generate_full_report()
+{
+    QString html = QString("%1"
+                           "%2"
+                           "<p>&nbsp;</p>"
+                           "%4"
+                           "<br>"
+                           "<br>"
+                           "<hr>"
+                           "<b>Lista nauczycieli bez stworzonych pytań:</b>"
+                           "<hr>"
+                           "%3")
+            .arg(generate_header())
+            .arg(generate_frame())
+            .arg(generate_teacher_without_test())
+            .arg(generate_teacher());
+    document.setHtml(html);
+    generate_document();
+}
+
+void GenerateTeachTest::generate_teacher_with_question_report()
+{
+    QString html = QString("%1"
+                           "%2"
+                           "<p>&nbsp;</p>"
+                           "<b>Lista nauczycieli bez stworzonych pytań:</b>"
+                           "<hr>"
+                           "%3")
+            .arg(generate_header())
+            .arg(generate_frame())
+            .arg(generate_teacher_without_test());
+    document.setHtml(html);
+    generate_document();
+}
+
+void GenerateTeachTest::generate_teacher_without_question_report()
+{
+    QString html = QString("%1"
+                           "%2"
+                           "<p>&nbsp;</p>"
+                           "%3")
+            .arg(generate_header())
+            .arg(generate_frame())
+            .arg(generate_teacher());
+    document.setHtml(html);
+    generate_document();
+}
+
 QString GenerateTeachTest::generate_header()
 {
-    QString header = QString("<h1 align = 'center'>Lista nauczycieli wraz z pytaniami</h1>");
+    QString header = QString("<h1 align = 'center'>Raport nauczycieli</h1>");
 
     return header;
 }
@@ -72,17 +113,15 @@ QString GenerateTeachTest::generate_teacher()
     for (int teacher_number = 0; teacher_number < m_model_teacher_test->rowCount(); teacher_number++){
         if (m_model_teacher_test->rowCount(m_model_teacher_test->index(teacher_number, 0)) > 0){
             teacher += QString(
+                        "<hr>"
                         "<table width='100%'>"
                         "<tr>"
-                        "<td width='5%'>%1</td>"
-                        "<td width='10%'>%2</td>"
-                        "<td width='10%'>%3</td>"
+                        "<td><b>%1</b></td>"
                         "</tr>"
                         "</table>"
                         "<hr>")
-                    .arg(teacher_number + 1)
-                    .arg(m_model_teacher_test->data(m_model_teacher_test->index(teacher_number, 0)).toString())
-                    .arg(m_model_teacher_test->data(m_model_teacher_test->index(teacher_number, 1)).toString());
+                    .arg(m_model_teacher_test->data(m_model_teacher_test->index(teacher_number, 0)).toString()
+                    + " " + m_model_teacher_test->data(m_model_teacher_test->index(teacher_number, 1)).toString());
             teacher += "<table width='100%'>";
             for (int question_id = 0; question_id < m_model_teacher_test->rowCount(m_model_teacher_test->index(teacher_number, 0)) ; question_id++){
                 teacher += QString(
@@ -90,9 +129,28 @@ QString GenerateTeachTest::generate_teacher()
                             "<td>%1</td>"
                             "</tr>").arg(m_model_teacher_test->index(teacher_number, 0).child(question_id, 0).data().toString());
             }
-            teacher += "</table>";
+            teacher += QString(
+                        "</table>"
+                        "<br>"
+                        "<br>");
         }
     }
-
     return teacher;
+}
+
+QString GenerateTeachTest::generate_teacher_without_test()
+{
+    QString teacher_without_test = "<table>";
+    for (int teacher_number = 0; teacher_number < m_model_teacher_test->rowCount(); teacher_number++){
+        if (m_model_teacher_test->rowCount(m_model_teacher_test->index(teacher_number, 0)) == 0){
+            teacher_without_test += QString(
+                        "<tr>"
+                        "<td>%1</td>"
+                        "</tr>").arg(m_model_teacher_test->data(m_model_teacher_test->index(teacher_number, 0)).toString()
+                    + " " + m_model_teacher_test->data(m_model_teacher_test->index(teacher_number, 1)).toString());
+        }
+    }
+    teacher_without_test += "</table>";
+
+    return teacher_without_test;
 }

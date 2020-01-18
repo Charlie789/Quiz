@@ -143,8 +143,9 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
         case CustomTypes::RequestAnswerForQuestion:
         case CustomTypes::RequestNumberOfCreatedTestWithZerosRequest:
         case CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest:
-        case CustomTypes::RequestCreatedTestWithZerosRequest:
-        case CustomTypes::RequestCreatedTestWithoutZerosRequest:
+        case CustomTypes::RequestCreatedFullTeacherReportRequest:
+        case CustomTypes::RequestCreatedTeacherWithZerosReportRequest:
+        case CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest:
         {
             qCDebug(restapi) << type_request << "response:";
             qCDebug(restapi) << reply_array;
@@ -292,7 +293,7 @@ void RestApiClient::send_number_of_created_test_without_zeros_request()
     send_sql_frame(query, CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest);
 }
 
-void RestApiClient::send_created_test_with_zeros_request()
+void RestApiClient::send_created_full_teacher_report_request()
 {
     QString query = "{ "
                     "\"commands\":\"SELECT u.lname, u.fname, q.contents FROM question AS q "
@@ -302,18 +303,31 @@ void RestApiClient::send_created_test_with_zeros_request()
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
                     "}";
-    send_sql_frame(query, CustomTypes::RequestCreatedTestWithZerosRequest);
+    send_sql_frame(query, CustomTypes::RequestCreatedFullTeacherReportRequest);
 }
 
-void RestApiClient::send_created_test_without_zeros_request()
+void RestApiClient::send_created_teacher_with_zeros_report_request()
 {
     QString query = "{ "
                     "\"commands\":\"SELECT u.lname, u.fname, q.contents FROM question AS q "
-                        "INNER JOIN teacher AS t ON q.teacher_id = t.id_teacher "
+                        "RIGHT JOIN teacher AS t ON q.teacher_id = t.id_teacher "
                         "LEFT JOIN user AS u ON t.id_teacher = u.id_user;\", "
                     "\"limit\":1000, "
                     "\"separator\":\";\", "
                     "\"stop_on_error\":\"yes\" "
                     "}";
-    send_sql_frame(query, CustomTypes::RequestCreatedTestWithoutZerosRequest);
+    send_sql_frame(query, CustomTypes::RequestCreatedTeacherWithZerosReportRequest);
+}
+
+void RestApiClient::send_created_teacher_without_zeros_report_request()
+{
+    QString query = "{ "
+                    "\"commands\":\"SELECT u.lname, u.fname, q.contents FROM question AS q "
+                        "RIGHT JOIN teacher AS t ON q.teacher_id = t.id_teacher "
+                        "LEFT JOIN user AS u ON t.id_teacher = u.id_user;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest);
 }

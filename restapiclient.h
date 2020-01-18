@@ -48,8 +48,9 @@ public slots:
     void send_add_question_request(const QList<QString> new_question);
     void send_number_of_created_test_with_zeros_request();
     void send_number_of_created_test_without_zeros_request();
-    void send_created_test_with_zeros_request();
-    void send_created_test_without_zeros_request();
+    void send_created_full_teacher_report_request();
+    void send_created_teacher_with_zeros_report_request();
+    void send_created_teacher_without_zeros_report_request();
 
 signals:
     void reply_received(CustomTypes::RequestType request_type, QByteArray reply_array);

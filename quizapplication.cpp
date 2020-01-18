@@ -19,6 +19,7 @@ QuizApplication::QuizApplication(int &argc, char **argv) :
     connect(&w, &MainWindow::add_question_push_button_clicked, &m_restapiclient, &RestApiClient::send_add_question_request);
     connect(&w, &MainWindow::without_zeros_push_button_clicked, &m_restapiclient, &RestApiClient::send_number_of_created_test_without_zeros_request);
     connect(&w, &MainWindow::with_zeros_push_button_clicked, &m_restapiclient, &RestApiClient::send_number_of_created_test_with_zeros_request);
-    //connect(&w, &MainWindow::generate_teacher_test_clicked, &m_generate_teacher_test, &GenerateTeachTest::generate_document);
-    connect(&w, &MainWindow::generate_teacher_test_clicked, &m_restapiclient, &RestApiClient::send_created_test_with_zeros_request);
+    connect(&w, &MainWindow::generate_full_teacher_report, &m_restapiclient, &RestApiClient::send_created_full_teacher_report_request);
+    connect(&w, &MainWindow::generate_teacher_with_question_report, &m_restapiclient, &RestApiClient::send_created_teacher_with_zeros_report_request);
+    connect(&w, &MainWindow::generate_teacher_without_question_report, &m_restapiclient, &RestApiClient::send_created_teacher_without_zeros_report_request);
 }
