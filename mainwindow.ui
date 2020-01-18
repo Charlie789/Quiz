@@ -14,295 +14,264 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="test_push_button">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>10</y>
-      <width>80</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Test</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="category_push_button">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>10</y>
-      <width>80</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Kategoria</string>
-    </property>
-   </widget>
-   <widget class="QStackedWidget" name="stacked_widget">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>89</y>
-      <width>791</width>
-      <height>481</height>
-     </rect>
-    </property>
-    <widget class="QWidget" name="test_page">
-     <widget class="QTableView" name="tableView">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>40</y>
-        <width>721</width>
-        <height>391</height>
-       </rect>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="showDropIndicator" stdset="0">
-       <bool>false</bool>
-      </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" colspan="4">
+     <widget class="QStackedWidget" name="stacked_widget">
+      <widget class="QWidget" name="test_page">
+       <widget class="QTableView" name="tableView">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>40</y>
+          <width>721</width>
+          <height>391</height>
+         </rect>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="category_page">
+       <widget class="QListView" name="category_list_view">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>90</y>
+          <width>291</width>
+          <height>361</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="category_line_edit">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>201</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="add_category_push_button">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>50</y>
+          <width>80</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Dodaj</string>
+        </property>
+       </widget>
+       <widget class="QTextEdit" name="question_text_edit">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>90</y>
+          <width>361</width>
+          <height>85</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="correct_answer_line_edit">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>220</y>
+          <width>361</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="wrong_answer1_line_edit">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>280</y>
+          <width>361</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="wrong_answer2_line_edit">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>320</y>
+          <width>361</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="wrong_answer3_line_edit">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>360</y>
+          <width>361</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>60</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Treść pytania</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>190</y>
+          <width>151</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Prawidłowa odpowiedź</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>250</y>
+          <width>151</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Pozostałe odpowiedzi</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="add_question_to_db_push_button">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>400</y>
+          <width>361</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Dodaj pytanie</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="raport_questions_page">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="1" column="1">
+         <widget class="QRadioButton" name="chart_without_zeros_radio">
+          <property name="text">
+           <string>Bez zer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="chart_with_zeros_radio">
+          <property name="text">
+           <string>Z zerami</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="3">
+         <widget class="QWidget" name="chart_widget" native="true"/>
+        </item>
+        <item row="0" column="3">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2" rowspan="2">
+         <widget class="QPushButton" name="generate_chart_pushbutton">
+          <property name="text">
+           <string>Generuj wykres</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="new_question_variant_page">
+       <widget class="QListView" name="variant_question_list_view">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>0</y>
+          <width>481</width>
+          <height>431</height>
+         </rect>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="variant_question_push_button">
+        <property name="geometry">
+         <rect>
+          <x>560</x>
+          <y>120</y>
+          <width>80</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Generuj</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
-    </widget>
-    <widget class="QWidget" name="category_page">
-     <widget class="QListView" name="category_list_view">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>90</y>
-        <width>291</width>
-        <height>361</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="category_line_edit">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>50</y>
-        <width>201</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="add_category_push_button">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>50</y>
-        <width>80</width>
-        <height>25</height>
-       </rect>
-      </property>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="question_variant_push_button">
       <property name="text">
-       <string>Dodaj</string>
+       <string>Nowy wariant pytania</string>
       </property>
      </widget>
-     <widget class="QTextEdit" name="question_text_edit">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>90</y>
-        <width>361</width>
-        <height>85</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="correct_answer_line_edit">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>220</y>
-        <width>361</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="wrong_answer1_line_edit">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>280</y>
-        <width>361</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="wrong_answer2_line_edit">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>320</y>
-        <width>361</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="wrong_answer3_line_edit">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>360</y>
-        <width>361</width>
-        <height>24</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>60</y>
-        <width>101</width>
-        <height>16</height>
-       </rect>
-      </property>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="category_push_button">
       <property name="text">
-       <string>Treść pytania</string>
+       <string>Kategoria</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_2">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>190</y>
-        <width>151</width>
-        <height>16</height>
-       </rect>
-      </property>
+    </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="test_push_button">
       <property name="text">
-       <string>Prawidłowa odpowiedź</string>
+       <string>Test</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>250</y>
-        <width>151</width>
-        <height>16</height>
-       </rect>
-      </property>
+    </item>
+    <item row="0" column="3">
+     <widget class="QPushButton" name="add_question_push_button">
       <property name="text">
-       <string>Pozostałe odpowiedzi</string>
+       <string>Raport utworzonych testów</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="add_question_to_db_push_button">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>400</y>
-        <width>361</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Dodaj pytanie</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="raport_questions_page">
-     <widget class="QTableView" name="created_tests_raports_list_view">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>70</y>
-        <width>741</width>
-        <height>391</height>
-       </rect>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="selectionMode">
-       <enum>QAbstractItemView::SingleSelection</enum>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="with_zeros_push_button">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>30</y>
-        <width>80</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Z zerami</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="without_zeros_push_button">
-      <property name="geometry">
-       <rect>
-        <x>410</x>
-        <y>30</y>
-        <width>80</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Bez zer</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="new_question_variant_page">
-     <widget class="QListView" name="variant_question_list_view">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>0</y>
-        <width>481</width>
-        <height>431</height>
-       </rect>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="variant_question_push_button">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>120</y>
-        <width>80</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Generuj</string>
-      </property>
-     </widget>
-    </widget>
-   </widget>
-   <widget class="QPushButton" name="question_variant_push_button">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>10</y>
-      <width>141</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Nowy wariant pytania</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="add_question_push_button">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>10</y>
-      <width>181</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Raport utworzonych testów</string>
-    </property>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -310,7 +279,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

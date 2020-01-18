@@ -3,7 +3,7 @@
 QuizApplication::QuizApplication(int &argc, char **argv) :
     QApplication(argc, argv)
 {
-    w.show();
+    w.showMaximized();
 
     connect(&m_restapiclient, &RestApiClient::reply_received, &m_reply_handler, &ReplyHandler::reply_received);
     connect(&m_reply_handler, &ReplyHandler::model_ready, &w, &MainWindow::set_models);

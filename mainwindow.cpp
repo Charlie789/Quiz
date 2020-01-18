@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     , m_test_model(nullptr)
 {
     ui->setupUi(this);
+    ui->generate_chart_pushbutton->setEnabled(false);
+    ui->chart_widget->setLayout(new QVBoxLayout);
 }
 
 MainWindow::~MainWindow()
@@ -47,15 +50,39 @@ void MainWindow::set_models(QStandardItemModel* model, CustomTypes::RequestType 
     case CustomTypes::RequestCreatedTestWithoutZerosRequest:
     case CustomTypes::RequestCreatedTestWithZerosRequest:
         m_created_tests_model = model;
-        ui->created_tests_raports_list_view->setModel(m_created_tests_model);
-        ui->created_tests_raports_list_view->setColumnWidth(0,150);
-        ui->created_tests_raports_list_view->setColumnWidth(1,150);
-        ui->created_tests_raports_list_view->setColumnWidth(2,150);
+        create_chart();
         break;
     default:
         break;
     }
 
+}
+
+void MainWindow::create_chart()
+{
+    if(chartView)
+        ui->chart_widget->layout()->removeWidget(chartView);
+    QtCharts::QPieSeries *series = new QtCharts::QPieSeries();
+    for (int row = 0; row < m_created_tests_model->rowCount(); row++){
+        series->append(m_created_tests_model->data(m_created_tests_model->index(row, 0)).toString()
+                       + " " + m_created_tests_model->data(m_created_tests_model->index(row, 1)).toString()
+                       , m_created_tests_model->data(m_created_tests_model->index(row, 2)).toDouble());
+    }
+
+    for (int slices = 0; slices < series->slices().count(); slices++){
+        QtCharts::QPieSlice *slice = series->slices().at(slices);
+        if(slice->value() > 0)
+            slice->setLabelVisible();
+    }
+
+    QtCharts::QChart *chart = new QtCharts::QChart();
+    chart->addSeries(series);
+    chart->setTitle("Wykres utworzonych pytań");
+    chart->legend()->setAlignment(Qt::AlignLeft);
+
+    chartView = new QtCharts::QChartView(chart, ui->chart_widget);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    ui->chart_widget->layout()->addWidget(chartView);
 }
 
 void MainWindow::on_test_push_button_clicked()
@@ -124,12 +151,22 @@ void MainWindow::on_add_question_to_db_push_button_clicked()
     emit add_question_push_button_clicked(new_question);
 }
 
-void MainWindow::on_with_zeros_push_button_clicked()
+void MainWindow::on_generate_chart_pushbutton_clicked()
 {
-    emit with_zeros_push_button_clicked();
+    if(ui->chart_with_zeros_radio->isChecked())
+        emit with_zeros_push_button_clicked();
+    if(ui->chart_without_zeros_radio->isChecked())
+        emit without_zeros_push_button_clicked();
 }
 
-void MainWindow::on_without_zeros_push_button_clicked()
+void MainWindow::on_chart_with_zeros_radio_clicked()
 {
-    emit without_zeros_push_button_clicked();
+    if(!ui->generate_chart_pushbutton->isEnabled())
+        ui->generate_chart_pushbutton->setEnabled(true);
+}
+
+void MainWindow::on_chart_without_zeros_radio_clicked()
+{
+    if(!ui->generate_chart_pushbutton->isEnabled())
+        ui->generate_chart_pushbutton->setEnabled(true);
 }

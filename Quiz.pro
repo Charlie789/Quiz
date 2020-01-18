@@ -1,4 +1,4 @@
-QT       += core gui network sql
+QT       += core gui network sql charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -37,5 +37,5 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-LIBS += -L$$OUT_PWD -leay32
-LIBS += -L$$OUT_PWD -lssl32
+#LIBS += -L$$OUT_PWD -leay32
+#LIBS += -L$$OUT_PWD -lssl32
