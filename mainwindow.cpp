@@ -71,6 +71,7 @@ void MainWindow::create_chart()
 
     for (int slices = 0; slices < series->slices().count(); slices++){
         QtCharts::QPieSlice *slice = series->slices().at(slices);
+        slice->setLabel(slice->label() + ": " + QString::number(slice->value()));
         if(slice->value() > 0)
             slice->setLabelVisible();
     }
