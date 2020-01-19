@@ -146,6 +146,9 @@ void RestApiClient::reply_finished(QNetworkReply *reply)
         case CustomTypes::RequestCreatedFullTeacherReportRequest:
         case CustomTypes::RequestCreatedTeacherWithZerosReportRequest:
         case CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest:
+        case CustomTypes::RequestCategoryFullNumberOfQuestionRequest:
+        case CustomTypes::RequestCategoryNumberOfQuestionWithParentRequest:
+        case CustomTypes::RequestCategoryNumberOfQuestionWithoutParentRequest:
         {
             qCDebug(restapi) << type_request << "response:";
             qCDebug(restapi) << reply_array;
@@ -330,4 +333,45 @@ void RestApiClient::send_created_teacher_without_zeros_report_request()
                     "\"stop_on_error\":\"yes\" "
                     "}";
     send_sql_frame(query, CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest);
+}
+
+void RestApiClient::send_category_full_question_request()
+{
+    QString query = "{ "
+                    "\"commands\":\" SELECT c.category_name, count(c.ID_category) as Question_qantity from category as c "
+                    "JOIN question as q on q.category_ID = c.ID_category "
+                    "GROUP BY c.category_name;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestCategoryFullNumberOfQuestionRequest);
+}
+
+void RestApiClient::send_category_with_parent_question_request()
+{
+    QString query = "{ "
+                    "\"commands\":\" SELECT c.category_name, count(c.ID_category) as Question_qantity from category as c "
+                    "JOIN question as q on q.category_ID = c.ID_category "
+                    "WHERE c.parent_category_id IS NOT NULL "
+                    "GROUP BY c.category_name;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestCategoryNumberOfQuestionWithoutParentRequest);
+}
+
+void RestApiClient::send_category_without_parent_question_request()
+{
+    QString query = "{ "
+                    "\"commands\":\" SELECT c.category_name, count(c.ID_category) as Question_qantity from category as c "
+                    "JOIN question as q on q.category_ID = c.ID_category "
+                    "WHERE c.parent_category_id IS NULL "
+                    "GROUP BY c.category_name;\", "
+                    "\"limit\":1000, "
+                    "\"separator\":\";\", "
+                    "\"stop_on_error\":\"yes\" "
+                    "}";
+    send_sql_frame(query, CustomTypes::RequestCategoryNumberOfQuestionWithoutParentRequest);
 }

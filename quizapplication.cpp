@@ -22,4 +22,7 @@ QuizApplication::QuizApplication(int &argc, char **argv) :
     connect(&w, &MainWindow::generate_full_teacher_report, &m_restapiclient, &RestApiClient::send_created_full_teacher_report_request);
     connect(&w, &MainWindow::generate_teacher_with_question_report, &m_restapiclient, &RestApiClient::send_created_teacher_with_zeros_report_request);
     connect(&w, &MainWindow::generate_teacher_without_question_report, &m_restapiclient, &RestApiClient::send_created_teacher_without_zeros_report_request);
+    connect(&w, &MainWindow::category_chart_full_clicked, &m_restapiclient, &RestApiClient::send_category_full_question_request);
+    connect(&w, &MainWindow::category_chart_with_zeros_clicked, &m_restapiclient, &RestApiClient::send_category_with_parent_question_request);
+    connect(&w, &MainWindow::category_chart_without_zeros_clicked, &m_restapiclient, &RestApiClient::send_category_without_parent_question_request);
 }

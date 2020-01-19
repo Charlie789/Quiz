@@ -22,7 +22,8 @@ public:
 
 public slots:
     void set_models(QStandardItemModel *model, CustomTypes::RequestType request_type);
-    void create_chart();
+    void create_teacher_question_chart();
+    void create_category_chart();
 
 private slots:
     void on_test_push_button_clicked();
@@ -38,6 +39,10 @@ private slots:
     void on_chart_without_zeros_radio_clicked();
     void on_text_reports_pushbutton_clicked();
     void on_generate_teacher_raport_pushbutton_clicked();
+    void on_category_with_zeros_radio_clicked();
+    void on_category_without_zeros_radio_clicked();
+    void on_category_chart_pushbutton_clicked();
+    void on_category_full_radio_clicked();
 
 signals:
     void test_push_button_clicked();
@@ -52,6 +57,9 @@ signals:
     void generate_full_teacher_report();
     void generate_teacher_with_question_report();
     void generate_teacher_without_question_report();
+    void category_chart_full_clicked();
+    void category_chart_with_zeros_clicked();
+    void category_chart_without_zeros_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -61,6 +69,7 @@ private:
     QStandardItemModel* m_question_model;
     QStandardItemModel* m_answer_for_question_model;
     QStandardItemModel* m_created_tests_model;
+    QStandardItemModel* m_category_question_model;
     QtCharts::QChartView* chartView;
 };
 #endif // MAINWINDOW_H

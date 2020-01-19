@@ -20,7 +20,10 @@ enum RequestType {
     RequestNumberOfCreatedTestWithoutZerosRequest,
     RequestCreatedFullTeacherReportRequest,
     RequestCreatedTeacherWithZerosReportRequest,
-    RequestCreatedTeacherWithoutZerosReportRequest
+    RequestCreatedTeacherWithoutZerosReportRequest,
+    RequestCategoryFullNumberOfQuestionRequest,
+    RequestCategoryNumberOfQuestionWithParentRequest,
+    RequestCategoryNumberOfQuestionWithoutParentRequest
 };
 
 }

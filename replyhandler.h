@@ -18,6 +18,7 @@ private:
     QStandardItemModel m_question_model;
     QStandardItemModel m_number_of_created_test_model;
     QStandardItemModel m_created_test_model;
+    QStandardItemModel m_category_question_model;
 
 signals:
     void model_ready(QStandardItemModel* model, CustomTypes::RequestType request_type);

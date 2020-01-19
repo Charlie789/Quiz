@@ -51,6 +51,9 @@ public slots:
     void send_created_full_teacher_report_request();
     void send_created_teacher_with_zeros_report_request();
     void send_created_teacher_without_zeros_report_request();
+    void send_category_full_question_request();
+    void send_category_with_parent_question_request();
+    void send_category_without_parent_question_request();
 
 signals:
     void reply_received(CustomTypes::RequestType request_type, QByteArray reply_array);

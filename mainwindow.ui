@@ -39,7 +39,7 @@
     <item row="0" column="3">
      <widget class="QPushButton" name="add_question_push_button">
       <property name="text">
-       <string>Raport utworzonych testów</string>
+       <string>Wykresy</string>
       </property>
      </widget>
     </item>
@@ -209,24 +209,7 @@
       </widget>
       <widget class="QWidget" name="raport_questions_page">
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="1" column="1">
-         <widget class="QRadioButton" name="chart_without_zeros_radio">
-          <property name="text">
-           <string>Bez zer</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QRadioButton" name="chart_with_zeros_radio">
-          <property name="text">
-           <string>Z zerami</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" colspan="3">
-         <widget class="QWidget" name="chart_widget" native="true"/>
-        </item>
-        <item row="0" column="3">
+        <item row="0" column="5">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -239,12 +222,75 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="2" rowspan="2">
-         <widget class="QPushButton" name="generate_chart_pushbutton">
-          <property name="text">
-           <string>Generuj wykres</string>
+        <item row="0" column="3">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Nauczyciele i pytania</string>
           </property>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="1" column="0">
+            <widget class="QRadioButton" name="chart_without_zeros_radio">
+             <property name="text">
+              <string>Bez zer</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="chart_with_zeros_radio">
+             <property name="text">
+              <string>Z zerami</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QPushButton" name="generate_chart_pushbutton">
+             <property name="text">
+              <string>Generuj wykres</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Kategorie i pytania</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="1" column="0">
+            <widget class="QRadioButton" name="category_with_zeros_radio">
+             <property name="text">
+              <string>Tylko kategorie podrzędne</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="category_chart_pushbutton">
+             <property name="text">
+              <string>Generuj wykres</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QRadioButton" name="category_without_zeros_radio">
+             <property name="text">
+              <string>Tylko kategorie nadrzędne</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="category_full_radio">
+             <property name="text">
+              <string>Pełny</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="1" rowspan="2" colspan="5">
+         <widget class="QWidget" name="chart_widget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -350,7 +396,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->generate_chart_pushbutton->setEnabled(false);
+    ui->category_chart_pushbutton->setEnabled(false);
     ui->chart_widget->setLayout(new QVBoxLayout);
 }
 
@@ -50,15 +51,20 @@ void MainWindow::set_models(QStandardItemModel* model, CustomTypes::RequestType 
     case CustomTypes::RequestNumberOfCreatedTestWithoutZerosRequest:
     case CustomTypes::RequestNumberOfCreatedTestWithZerosRequest:
         m_created_tests_model = model;
-        create_chart();
+        create_teacher_question_chart();
         break;
+    case CustomTypes::RequestCategoryFullNumberOfQuestionRequest:
+    case CustomTypes::RequestCategoryNumberOfQuestionWithParentRequest:
+    case CustomTypes::RequestCategoryNumberOfQuestionWithoutParentRequest:
+        m_category_question_model = model;
+        create_category_chart();
     default:
         break;
     }
 
 }
 
-void MainWindow::create_chart()
+void MainWindow::create_teacher_question_chart()
 {
     if(chartView)
         ui->chart_widget->layout()->removeWidget(chartView);
@@ -78,7 +84,34 @@ void MainWindow::create_chart()
 
     QtCharts::QChart *chart = new QtCharts::QChart();
     chart->addSeries(series);
-    chart->setTitle("Wykres utworzonych pytań");
+    chart->setTitle("Wykres nauczycieli i utworzonych pytań");
+    chart->legend()->setAlignment(Qt::AlignLeft);
+
+    chartView = new QtCharts::QChartView(chart, ui->chart_widget);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    ui->chart_widget->layout()->addWidget(chartView);
+}
+
+void MainWindow::create_category_chart()
+{
+    if(chartView)
+        ui->chart_widget->layout()->removeWidget(chartView);
+    QtCharts::QPieSeries *series = new QtCharts::QPieSeries();
+    for (int row = 0; row < m_category_question_model->rowCount(); row++){
+        series->append(m_category_question_model->data(m_category_question_model->index(row, 0)).toString()
+                       , m_category_question_model->data(m_category_question_model->index(row, 1)).toDouble());
+    }
+
+    for (int slices = 0; slices < series->slices().count(); slices++){
+        QtCharts::QPieSlice *slice = series->slices().at(slices);
+        slice->setLabel(slice->label() + ": " + QString::number(slice->value()));
+        if(slice->value() > 0)
+            slice->setLabelVisible();
+    }
+
+    QtCharts::QChart *chart = new QtCharts::QChart();
+    chart->addSeries(series);
+    chart->setTitle("Wykres kategorii i utworzonych pytań");
     chart->legend()->setAlignment(Qt::AlignLeft);
 
     chartView = new QtCharts::QChartView(chart, ui->chart_widget);
@@ -185,4 +218,32 @@ void MainWindow::on_generate_teacher_raport_pushbutton_clicked()
         emit generate_teacher_with_question_report();
     else if(ui->teacher_without_question_checkbox->isChecked())
         emit generate_teacher_without_question_report();
+}
+
+void MainWindow::on_category_with_zeros_radio_clicked()
+{
+    if(!ui->category_chart_pushbutton->isEnabled())
+        ui->category_chart_pushbutton->setEnabled(true);
+}
+
+void MainWindow::on_category_without_zeros_radio_clicked()
+{
+    if(!ui->category_chart_pushbutton->isEnabled())
+        ui->category_chart_pushbutton->setEnabled(true);
+}
+
+void MainWindow::on_category_chart_pushbutton_clicked()
+{
+    if(ui->category_full_radio->isChecked())
+        emit category_chart_full_clicked();
+    else if(ui->category_with_zeros_radio->isChecked())
+        emit category_chart_with_zeros_clicked();
+    else if (ui->category_without_zeros_radio->isChecked())
+        emit category_chart_without_zeros_clicked();
+}
+
+void MainWindow::on_category_full_radio_clicked()
+{
+    if(!ui->category_chart_pushbutton->isEnabled())
+        ui->category_chart_pushbutton->setEnabled(true);
 }

@@ -193,6 +193,32 @@ void ReplyHandler::reply_received(CustomTypes::RequestType request_type, QByteAr
         }
         emit model_ready(&m_created_test_model, CustomTypes::RequestCreatedTeacherWithoutZerosReportRequest);
         break;
+    case CustomTypes::RequestCategoryFullNumberOfQuestionRequest:
+        m_category_question_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            rowData << new QStandardItem(val[0].toString());
+            rowData << new QStandardItem(val[1].toString());
+            m_category_question_model.appendRow(rowData);
+        }
+        m_category_question_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwa kategorii"));
+        m_category_question_model.setHorizontalHeaderItem(1, new QStandardItem("Liczba utworzonych pytań"));
+        emit model_ready(&m_category_question_model, CustomTypes::RequestCategoryFullNumberOfQuestionRequest);
+        break;
+    case CustomTypes::RequestCategoryNumberOfQuestionWithoutParentRequest:
+        m_category_question_model.clear();
+        for (int row_index = 0; row_index < rows.count(); row_index++){
+            QJsonArray val = rows[row_index].toArray();
+            QList<QStandardItem *> rowData;
+            rowData << new QStandardItem(val[0].toString());
+            rowData << new QStandardItem(val[1].toString());
+            m_category_question_model.appendRow(rowData);
+        }
+        m_category_question_model.setHorizontalHeaderItem(0, new QStandardItem("Nazwa kategorii"));
+        m_category_question_model.setHorizontalHeaderItem(1, new QStandardItem("Liczba utworzonych pytań"));
+        emit model_ready(&m_category_question_model, CustomTypes::RequestCategoryNumberOfQuestionWithoutParentRequest);
+        break;
     default:
         break;
     }
